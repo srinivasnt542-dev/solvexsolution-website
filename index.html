@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SolvexSolution | Interior Design Studio, Bengaluru</title>
+<meta name="description" content="SolvexSolution creates premium, modern and personalised interior spaces across Karnataka. Transforming Spaces. Designing Experiences.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#171716">
+<meta property="og:title" content="SolvexSolution | Interior Design Studio">
+<meta property="og:description" content="Transforming Spaces. Designing Experiences.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="#home" aria-label="SolvexSolution home"><i aria-hidden="true"></i>SOLVEXSOLUTION</a>
+    <nav aria-label="Main">
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#showroom">3D Showroom</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="mob-cta"><a class="btn btn-primary" href="#contact">Get a Consultation</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="#contact">Get a Consultation</a>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="home" aria-label="SolvexSolution introduction">
+  <div class="hero-poster" aria-hidden="true"></div>
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-content">
+    <div class="container">
+      <h1 class="rise" style="--d:.5s">SOLVEXSOLUTION</h1>
+      <p class="tag rise" style="--d:.9s">Transforming Spaces. Designing Experiences.</p>
+      <div class="cta rise" style="--d:1.25s">
+        <a class="btn btn-primary" href="#projects">Explore Our Projects</a>
+        <a class="btn btn-ghost" href="#contact">Start Your Project</a>
+      </div>
+    </div>
+  </div>
+  <p class="hero-note" id="heroNote">Interactive 3D concept &middot; scroll to move through the room</p>
+  <a class="scroll-cue" href="#about" aria-label="Scroll down"><span>Scroll</span><b></b></a>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-copy">
+        <h2 id="aboutH"></h2>
+        <div class="about-story" id="aboutStory"></div>
+        <dl class="facts" id="aboutFacts"></dl>
+      </div>
+      <div class="collage" data-parallax="0.06">
+        <img class="a" data-img="panels" alt="Executive cabin with panelled walls and a walnut desk" loading="lazy" decoding="async">
+        <img class="b" data-img="living" alt="Living room with feature wall and chandelier" loading="lazy" decoding="async">
+      </div>
+    </div>
+    <div class="team" id="team" aria-label="Founder and team"></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section alt" id="services">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Everything a space needs, under one roof.</h2>
+      <p class="lede">Choose a single service or hand over the whole project. Each one is planned together with the rest.</p>
+    </div>
+    <div class="svc-grid" id="svcGrid"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Our projects</h2>
+      <p class="lede">Site photographs and 3D concept renders. Select a project for its materials, palette, lighting and more.</p>
+    </div>
+    <div class="chips" id="projChips" role="group" aria-label="Filter projects by category"></div>
+    <div class="proj-grid" id="projGrid" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- SHOWROOM -->
+<section class="section dark" id="showroom">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Step into the 3D showroom</h2>
+      <p class="lede">Drag to rotate the virtual apartment, then select a room to walk in and see its design, materials and lighting.</p>
+    </div>
+    <div class="sr-wrap">
+      <div class="stage" id="stage" aria-label="Interactive 3D showroom">
+        <canvas id="srCanvas" aria-hidden="true"></canvas>
+        <div id="pins"></div>
+        <div class="stage-ui">
+          <span class="stage-hint" id="stageHint">Drag to rotate &middot; Ctrl + scroll to zoom</span>
+          <button class="btn btn-ghost" id="srBack" hidden>Back to overview</button>
+        </div>
+      </div>
+      <div class="sr-info" id="srInfo" aria-live="polite"></div>
+    </div>
+    <div class="room-tabs" id="roomTabs" role="group" aria-label="Choose a room"></div>
+  </div>
+</section>
+
+<!-- TRANSFORMATION -->
+<section class="tf" id="transform" aria-label="From empty space to extraordinary">
+  <div class="tf-sticky">
+    <canvas id="tfCanvas" aria-hidden="true"></canvas>
+    <div class="tf-head"><div class="container"><h2>From Empty Space to Extraordinary</h2></div></div>
+    <p class="tf-scroll" id="tfHint">Keep scrolling</p>
+    <div class="tf-foot"><div class="container">
+      <p class="tf-stage-name" id="tfName" aria-live="polite">Empty room</p>
+      <ol class="tf-rail" id="tfRail"></ol>
+    </div></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Why SolvexSolution</h2>
+      <p class="lede">Six things we hold ourselves to on every project.</p>
+    </div>
+    <div class="why-grid" id="whyGrid"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section alt" id="process">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>How a project unfolds</h2>
+      <p class="lede">Seven clear steps from the first conversation to the day you move in.</p>
+    </div>
+    <ol class="timeline" id="timeline"></ol>
+  </div>
+</section>
+
+<!-- MATERIALS -->
+<section class="section" id="materials">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Materials &amp; finishes</h2>
+      <p class="lede">Hover or tap a material to see its texture and where it is used.</p>
+    </div>
+    <div class="mat-wrap">
+      <div class="mat-tiles" id="matTiles"></div>
+      <div class="mat-detail" id="matDetail"></div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section class="section dark" id="beforeafter">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>Before and after</h2>
+      <p class="lede">Drag the handle, or use the arrow keys, to see an ordinary room become a finished interior.</p>
+    </div>
+    <div id="baMain"></div>
+    <p class="ba-cap">Illustrative 3D concept. Replace with real site photographs by editing <code>CONFIG.beforeAfter</code>.</p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section alt" id="testimonials">
+  <div class="container">
+    <div class="sec-head row">
+      <h2>What clients say</h2>
+      <p class="lede">These are placeholders. Replace each one with a genuine customer review before publishing.</p>
+    </div>
+    <div class="tm-grid" id="tmGrid"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section dark" id="contact">
+  <div class="container contact-grid">
+    <div>
+      <h2>Let&rsquo;s design your space</h2>
+      <p class="lede">Tell us about the space and what you need from it. We will get back to you to arrange a consultation.</p>
+      <ul class="c-list" id="cList"></ul>
+    </div>
+    <form id="form" novalidate>
+      <div class="row2">
+        <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required><div class="err" data-err="name"></div></div>
+        <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required><div class="err" data-err="phone"></div></div>
+      </div>
+      <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required><div class="err" data-err="email"></div></div>
+      <div class="row2">
+        <div class="field"><label for="f-type">Project type</label><select id="f-type" name="type" required></select><div class="err" data-err="type"></div></div>
+        <div class="field"><label for="f-budget">Budget range</label><select id="f-budget" name="budget"></select></div>
+      </div>
+      <div class="field"><label for="f-msg">Message</label><textarea id="f-msg" name="message" placeholder="Location, size of the space, timeline, anything that matters to you"></textarea></div>
+      <button class="btn btn-primary" type="submit">Request a Consultation</button>
+      <p class="form-status" id="formStatus" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container foot-in">
+    <div>
+      <a class="logo" href="#home" style="color:var(--ink)"><i aria-hidden="true"></i>SOLVEXSOLUTION</a>
+      <p style="margin-top:.8rem">Transforming Spaces. Designing Experiences.</p>
+    </div>
+    <ul aria-label="Footer">
+      <li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#projects">Projects</a></li>
+      <li><a href="#showroom">3D Showroom</a></li><li><a href="#process">Process</a></li><li><a href="#contact">Contact</a></li>
+    </ul>
+    <p>&copy; <span id="year"></span> SolvexSolution</p>
+  </div>
+</footer>
+
+<!-- Project modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-hidden="true">
+  <div class="scrim" data-close></div>
+  <div class="m-panel" id="mPanel" tabindex="-1"></div>
+</div>
+
+<script src="assets/js/images.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/textures.js"></script>
+<script src="assets/js/scenes.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
