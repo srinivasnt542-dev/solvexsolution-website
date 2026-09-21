@@ -379,3 +379,7 @@ form{display:grid;gap:1.6rem}
 .hero.photo .hero-poster img.ok{opacity:1}
 @keyframes kb{from{transform:scale(1.03)}to{transform:scale(1.12)}}
 @media (max-width:640px){.hero.photo .hero-poster img{object-position:42% 50%}}
+
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.form-status a{color:inherit;text-underline-offset:3px}
+.btn:disabled{opacity:.6;cursor:progress;transform:none}

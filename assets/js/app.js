@@ -4,6 +4,7 @@
    ===================================================================== */
 (function(){
 'use strict';
+const pageStart=performance.now();
 const IMG=window.__IMG||{},PAL=window.__PAL||{},STILLS={};
 const $=(s,r)=>(r||document).querySelector(s),$$=(s,r)=>Array.from((r||document).querySelectorAll(s));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -53,7 +54,10 @@ const CONFIG={
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
   heroImage:'living',
   hero3D:false,
-  /* If set, the form opens the visitor's email app addressed here. Connect a form service before launch. */
+  /* Google Sheet connection: paste the Web app URL from Google Apps Script here (ends with /exec).
+     See google-apps-script-code.txt for the setup steps. While empty, the form falls back to formEmail. */
+  formEndpoint:'https://script.google.com/macros/s/AKfycbxjmDKapYtsj3SXJP4Sug2LMGmy8lRLKwt_ZtbPdkBvNtvWxPx0we8orODEzADDEiMz/exec',
+  /* Fallback only: opens the visitor's email app addressed here when formEndpoint is empty. */
   formEmail:'hello.solvexsolution@gmail.com'
 };
 
@@ -312,6 +316,7 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
   $('#f-type').innerHTML='<option value="">Select project type</option>'+CONFIG.projectTypes.map(t=>'<option>'+esc(t)+'</option>').join('');
   $('#f-budget').innerHTML=CONFIG.budgets.map(t=>'<option>'+esc(t)+'</option>').join('');
   const form=$('#form'),st=$('#formStatus');
+  form.insertAdjacentHTML('beforeend','<div class="hp" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>');
   form.addEventListener('submit',e=>{
     e.preventDefault();const f=new FormData(form),err={};
     if(!(f.get('name')||'').trim())err.name='Please enter your name.';
@@ -321,9 +326,24 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
     $$('.err',form).forEach(x=>x.textContent=err[x.dataset.err]||'');
     st.className='form-status';
     if(Object.keys(err).length){st.textContent='Please fix the highlighted fields.';const first=form.querySelector('[name="'+Object.keys(err)[0]+'"]');if(first)first.focus();return;}
+    if(f.get('website')){st.textContent='Thank you. We will be in touch soon.';st.className='form-status ok';form.reset();return;} /* honeypot: bots only */
+    const name=String(f.get('name')).trim();
+    if(CONFIG.formEndpoint){
+      const btn=$('button[type=submit]',form),label=btn.textContent,body=new URLSearchParams();
+      [['name',name],['phone',String(f.get('phone')).trim()],['email',String(f.get('email')).trim()],['type',f.get('type')],['budget',f.get('budget')],['message',f.get('message')||''],['page',location.href],['elapsed',Math.round((performance.now()-pageStart)/1000)]].forEach(p=>body.append(p[0],p[1]));
+      btn.disabled=true;btn.textContent='Sending\u2026';st.textContent='';
+      fetch(CONFIG.formEndpoint,{method:'POST',mode:'no-cors',body:body}).then(()=>{
+        const wa=(CONFIG.contact.whatsapp||[])[0];
+        st.innerHTML='Thank you, '+esc(name)+'. Your request has been received and we will contact you soon.'+(wa?' For a faster reply, <a href="https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.')+'" rel="noopener">message us on WhatsApp</a>.':'');
+        st.className='form-status ok';form.reset();
+      }).catch(()=>{
+        st.textContent='Sorry, we could not send your request. Please call or WhatsApp us using the details on this page.';
+      }).finally(()=>{btn.disabled=false;btn.textContent=label;});
+      return;
+    }
     const body='Name: '+f.get('name')+'\nPhone: '+f.get('phone')+'\nEmail: '+f.get('email')+'\nProject type: '+f.get('type')+'\nBudget: '+f.get('budget')+'\n\n'+(f.get('message')||'');
     if(CONFIG.formEmail){location.href='mailto:'+CONFIG.formEmail+'?subject='+encodeURIComponent('Consultation request \u2014 '+f.get('type'))+'&body='+encodeURIComponent(body);st.textContent='Opening your email app with the details filled in\u2026';st.className='form-status ok';}
-    else{st.textContent='Thank you, '+String(f.get('name')).trim()+'. This preview form is not connected to an inbox yet. Set CONFIG.formEmail or connect a form service before launch.';st.className='form-status ok';form.reset();}
+    else{st.textContent='Thank you, '+name+'. This preview form is not connected yet.';st.className='form-status ok';form.reset();}
   });
 })();
 
