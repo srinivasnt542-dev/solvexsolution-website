@@ -50,6 +50,9 @@ const CONFIG={
   ],
   /* Provide image URLs (or data URIs) to replace the concept before/after render with real site photos */
   beforeAfter:{before:null,after:null},
+  /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
+  heroImage:'living',
+  hero3D:false,
   /* If set, the form opens the visitor's email app addressed here. Connect a form service before launch. */
   formEmail:'hello.solvexsolution@gmail.com'
 };
@@ -354,14 +357,15 @@ if(GL){try{S=makeScenes();}catch(e){console.warn('3D unavailable',e);S=null;}}
 const heroEl=$('#home');
 (function(){
   let ok=false;
-  if(S){try{
+  if(S&&CONFIG.hero3D){try{
     const hv=S.createHero($('#heroCanvas'),{lite,dpr,exposure:1});
     const view={visible:true,render:dt=>hv.render(dt),resize:hv.resize};watch(heroEl,view);
     if(reduce)hv.renderOnce();hv.renderOnce();heroEl.classList.add('ready');ok=true;
   }catch(e){console.warn('hero 3D failed',e);}}
   if(!ok){
-    const po=$('.hero-poster');po.innerHTML='<img data-img="living" alt="" decoding="async">';paintImgs(po);heroEl.classList.add('ready');$('#heroCanvas').remove();$('#heroNote').textContent='';
-    if(!reduce)addEventListener('scroll',()=>{$('.hero-poster img').style.transform='scale(1.08) translateY('+(scrollY*.12)+'px)';},{passive:true});
+    const po=$('.hero-poster');po.innerHTML='<img data-img="'+esc(CONFIG.heroImage)+'" alt="Living room interior designed by SolvexSolution" decoding="async" fetchpriority="high">';paintImgs(po);
+    heroEl.classList.add('ready','photo');$('#heroCanvas').remove();$('#heroNote').textContent='';
+    if(!reduce){const im=$('img',po);addEventListener('scroll',()=>{const y=scrollY;if(y<innerHeight*1.2)im.style.transform='translateY('+(y*.14).toFixed(1)+'px)';},{passive:true});}
   }
 })();
 

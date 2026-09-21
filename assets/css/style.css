@@ -373,3 +373,9 @@ form{display:grid;gap:1.6rem}
 .stat b.txt{font-size:clamp(1.8rem,3.6vw,3rem);padding-top:.5rem;letter-spacing:-.01em}
 .c-list a{text-decoration:none;border-bottom:1px solid var(--line)}.c-list a:hover{border-color:var(--brass)}
 @media (max-width:640px){.facts div{grid-template-columns:1fr;gap:.1rem}}
+
+.hero.photo .hero-poster{animation:kb 30s ease-in-out infinite alternate;background:#141312}
+.hero.photo .hero-poster img{opacity:0;transition:opacity 1.4s ease;object-position:50% 45%;will-change:transform}
+.hero.photo .hero-poster img.ok{opacity:1}
+@keyframes kb{from{transform:scale(1.03)}to{transform:scale(1.12)}}
+@media (max-width:640px){.hero.photo .hero-poster img{object-position:42% 50%}}
