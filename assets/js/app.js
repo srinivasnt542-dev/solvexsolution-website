@@ -10,7 +10,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function h(tag,attrs,html){const e=document.createElement(tag);if(typeof attrs==='string')e.className=attrs;else if(attrs)for(const k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k]);}if(html!=null)e.innerHTML=html;return e;}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const imgSrc=k=>IMG[k]||STILLS[k]||null;
+const imgSrc=k=>IMG[k]||STILLS[k]||(/\.(jpe?g|png|webp|avif)$/i.test(k)?k:null);
 
 /* ---------------- CONFIG (edit me) ---------------- */
 const CONFIG={
@@ -110,93 +110,8 @@ const PROCESS=[
 ];
 const CATS=['All','Residential','Commercial','Office','Luxury Interiors','Modular Kitchen','Bedroom','Living Room'];
 
-/* Projects: replace img keys / titles / locations with real details. `[Location]` is a placeholder. */
-const PROJECTS=[
-  {id:'suite',title:'Executive Suite',loc:'[Location]',cats:['Office','Commercial','Luxury Interiors'],img:'suite',badge:'Site photo',
-    desc:'A director\u2019s suite with a stone-look feature wall, LED cove ceiling and a walnut executive desk.',
-    overview:'A private executive suite planned around a large feature wall, a freestanding desk and concealed storage behind panelled joinery.',
-    concept:'Warm, layered light frames a bold stone-effect wall while panelled joinery and a patterned carpet ground the room.',
-    materials:['Stone-look wall panels','Walnut veneer joinery','Solid-surface desk top','Lattice metal screen','Patterned carpet','Glass partition'],
-    lighting:'Recessed LED cove and a linear LED line in a stepped false ceiling, with vertical LED strips along the wall edges.',
-    gallery:['suite','cabin','panels'],details:[['Type','Executive office'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'reception',title:'Corporate Reception',loc:'[Location]',cats:['Commercial','Office','Luxury Interiors'],img:'reception',badge:'Site photo',pos:'50% 60%',
-    desc:'A sculpted white reception desk with a walnut base against a black marble-look backdrop.',
-    overview:'A reception zone that sets the tone on arrival: a bold desk, a dark stone backdrop and glass-fronted meeting rooms beyond.',
-    concept:'High contrast between white, black and warm timber makes the desk the focal point of the floor.',
-    materials:['Black marble-look wall panels','Polished dark stone-look floor','White solid-surface desk','Walnut veneer','Fluted oak-tone panels','Timber grid ceiling','Glass partitions'],
-    lighting:'Recessed downlights over the desk and daylight from the glazed wall.',
-    gallery:['reception','lobby'],details:[['Type','Reception / lobby'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'lobby',title:'Wave Ceiling Lobby',loc:'[Location]',cats:['Commercial','Luxury Interiors'],img:'lobby',badge:'Site photo',pos:'50% 18%',
-    desc:'A sculptural ceiling of layered curved baffles in orange, ochre and blue above the reception.',
-    overview:'A lobby where the ceiling is the feature: layered, curved baffles flow across the space toward the glazed facade.',
-    concept:'Colour is concentrated overhead so the floor and walls can stay calm, stone and timber.',
-    materials:['Layered curved ceiling baffles','Fluted timber wall panels','Black marble-look backdrop','Polished stone-look floor'],
-    lighting:'Recessed spotlights along the ceiling edge, with floor-to-ceiling daylight.',
-    gallery:['lobby','reception'],details:[['Type','Lobby / ceiling feature'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'boardroom',title:'Boardroom',loc:'[Location]',cats:['Office','Commercial'],img:'boardroom',badge:'Site photo',
-    desc:'A glass-fronted meeting room with a slatted timber ceiling and lattice-pattern wall panels.',
-    overview:'A boardroom with a long conference table, storage wall, writable surfaces and a glazed front that keeps it open to the floor.',
-    concept:'A warm slatted ceiling and textured white joinery add depth without crowding a working room.',
-    materials:['Slatted timber ceiling','Textured white wall panels','Walnut veneer doors','Glass partition with steel handles','Carpet tiles','Writable glass walls'],
-    lighting:'Recessed downlights set into the slatted ceiling.',
-    gallery:['boardroom'],details:[['Type','Meeting room'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'living',title:'Family Living Room',loc:'[Location]',cats:['Residential','Living Room','Luxury Interiors'],img:'living',badge:'Site photo',
-    desc:'A warm living room with a textured feature wall, a crystal chandelier and a lit display niche.',
-    overview:'An open living and dining space with an L-shaped sofa, a display niche and layered lighting.',
-    concept:'Warm light, texture and a centred display niche turn a plain wall into the room\u2019s focal point.',
-    materials:['Brick-texture wall covering','Fluted wood-finish niche panels','Fabric sectional sofa','Glass-top coffee table','Crystal-drop chandelier'],
-    lighting:'A statement chandelier, wall sconces, pendant lights and warm niche lighting.',
-    gallery:['living'],details:[['Type','Residential living room'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'bedroom',title:'Bedroom with Full-Height Wardrobes',loc:'[Location]',cats:['Residential','Bedroom'],img:'bedroom',badge:'Site photo',
-    desc:'A calm bedroom with floor-to-ceiling wardrobes, pleated curtains and a sculptural pendant.',
-    overview:'A bedroom that gets its storage from a full-height wardrobe wall, leaving the floor clear.',
-    concept:'Two-tone shutters break up the wardrobe, while a single accent wall adds colour.',
-    materials:['Two-tone laminate wardrobe shutters','Accent wall paint','Pleated curtains with contrast bands','Sculptural pendant lamp'],
-    lighting:'A soft pendant and a concealed cove glow along the ceiling.',
-    gallery:['bedroom'],details:[['Type','Residential bedroom'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'kitchen',title:'Matte Black Modular Kitchen',loc:'[Location]',cats:['Residential','Modular Kitchen'],img:'kitchen',badge:'Site photo',pos:'50% 35%',
-    desc:'A compact modular kitchen in matte black with brass handles and a ring pendant.',
-    overview:'An L-shaped modular kitchen with tall storage, a hob and hood wall, and open shelves for plants.',
-    concept:'A dark, matte palette with brass accents keeps a small kitchen feeling deliberate rather than tight.',
-    materials:['Matte black laminate shutters','Brass handles','Textured black wall tiles','Light quartz countertop','Frosted glass shutters'],
-    lighting:'A sculptural ring pendant and under-cabinet task lighting.',
-    gallery:['kitchen'],details:[['Type','Modular kitchen'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'panels',title:'Director\u2019s Cabin',loc:'[Location]',cats:['Office','Luxury Interiors'],img:'panels',badge:'Site photo',
-    desc:'Classical wall panelling with copper-tone trim, marble-look cladding and a walnut desk.',
-    overview:'A cabin that pairs classical moulded panels with a modern desk and a concealed storage wall.',
-    concept:'A crisp white palette with copper-tone trim gives a traditional detail a contemporary finish.',
-    materials:['Moulded wall panels with copper-tone trim','Marble-look cladding','Walnut veneer desk','Perforated lattice screen','Patterned carpet'],
-    lighting:'Recessed downlights over each panel and a stepped ceiling with concealed lighting.',
-    gallery:['panels','suite'],details:[['Type','Executive cabin'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','[Design + execution]']]},
-  {id:'c-living',title:'Modern Living Concept',loc:'3D concept',cats:['Residential','Living Room','Luxury Interiors'],img:'lvA',badge:'3D concept',concept3d:true,
-    desc:'A luxurious open living room with a fluted walnut wall, marble panel and floor-to-ceiling windows.',
-    overview:'A concept render of a living room designed around daylight, a media wall and a cove-lit ceiling.',
-    concept:'Warm timber, stone and layered lighting, with a calm palette of beige and white.',
-    materials:['Fluted walnut wall','Marble feature panel','Oak flooring','Fabric sofa','Brass details'],
-    lighting:'Cove-lit stepped ceiling, recessed downlights, a ring chandelier and LED wall edges.',
-    gallery:['lvA','lvB','lvFinal'],details:[['Type','Concept render'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','Concept']],pal:['#eee8dd','#7b4d2b','#b48c5c','#cfc2ae','#b8925a']},
-  {id:'c-bedroom',title:'Master Bedroom Concept',loc:'3D concept',cats:['Residential','Bedroom','Luxury Interiors'],img:'bedroom1',badge:'3D concept',concept3d:true,
-    desc:'A restful master bedroom with a slatted headboard wall, wardrobe wall and layered bedside lighting.',
-    overview:'A concept render of a bedroom built around a fluted headboard wall and a full-height wardrobe.',
-    concept:'Soft neutrals and warm timber with light kept low and close to the bed.',
-    materials:['Fluted walnut headboard wall','Upholstered headboard','Walnut wardrobe','Linen textiles','Brass details'],
-    lighting:'Pendant lamps beside the bed, LED edges on the headboard wall and warm ambient light.',
-    gallery:['bedroom1','bedroom2'],details:[['Type','Concept render'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','Concept']],pal:['#d9ccb7','#7b4d2b','#f3f1ec','#6f6a60','#b8925a']},
-  {id:'c-kitchen',title:'Modular Kitchen Concept',loc:'3D concept',cats:['Residential','Modular Kitchen'],img:'kitchen1',badge:'3D concept',concept3d:true,
-    desc:'A modular kitchen with charcoal base units, walnut wall units, a marble island and pendant lights.',
-    overview:'A concept render of an island kitchen with a full run of base and wall cabinets and a tall appliance unit.',
-    concept:'Dark base units ground the room while walnut wall units and marble keep it warm.',
-    materials:['Charcoal laminate shutters','Walnut and oak wall units','Marble-look countertops','Brass handles','Stainless tall unit'],
-    lighting:'Pendants over the island and a warm strip beneath the wall cabinets.',
-    gallery:['kitchen1','kitchen2'],details:[['Type','Concept render'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','Concept']],pal:['#2d2c2b','#7b4d2b','#eee8dd','#b8925a','#d9d9d6']},
-  {id:'c-office',title:'Executive Office Concept',loc:'3D concept',cats:['Office','Commercial'],img:'office1',badge:'3D concept',concept3d:true,
-    desc:'An executive office with a full-height shelving wall, walnut desk and glass partition.',
-    overview:'A concept render of a private office with a storage wall, executive desk and visitor seating.',
-    concept:'Walnut, stone and dark carpet give the room weight; glass keeps it open.',
-    materials:['Walnut shelving wall','Stone-look credenza top','Carpet flooring','Leather seating','Glass partition'],
-    lighting:'A linear pendant above the desk and lit shelves behind it.',
-    gallery:['office1','office2'],details:[['Type','Concept render'],['Area','[Sq. ft]'],['Year','[Year]'],['Scope','Concept']],pal:['#d9ccb7','#7b4d2b','#6b6862','#2d2c2b','#b8925a']}
-];
+/* Projects live in assets/js/projects.js */
+const PROJECTS=window.__PROJECTS||[];
 
 const ROOM_INFO={
   living:{name:'Living Room',concept:'A warm, layered lounge organised around a fluted walnut feature wall.',design:'The sofa sits against the feature wall with two lounge chairs facing a marble coffee table. A rug defines the seating zone.',materials:'Fluted walnut, marble side panels, oak flooring, textured fabric, brass details.',lighting:'LED edges on the feature wall, three pendants over the coffee table, a floor lamp and daylight from the window.',furniture:'Three-seat sofa, two lounge chairs, marble coffee table, sideboard, floor lamp.'},

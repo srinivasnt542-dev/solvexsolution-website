@@ -9,7 +9,8 @@ index.html              page structure
 favicon.svg, robots.txt
 assets/
   css/style.css         all styling
-  js/app.js             CONFIG (contact, stats, about) + PROJECTS + all page behaviour  <-- edit content here
+  js/app.js             CONFIG (contact, stats, about) + all page behaviour  <-- edit contact/about here
+  js/projects.js        the list of projects  <-- add new projects here
   js/scenes.js          3D scenes (hero, showroom, room transformation, concept renders)
   js/textures.js        procedural textures for the 3D scenes and material library
   js/images.js          map of photo names to files in assets/img
@@ -34,10 +35,18 @@ Open `assets/js/app.js`. Everything editable is at the top:
 - `CONFIG.stats`    animated numbers ("Happy clients" is still a placeholder)
 - `CONFIG.testimonials`  placeholders, replace with genuine reviews
 - `CONFIG.formEmail`  where the contact form sends mail (see "Contact form" below)
-- `PROJECTS`        project cards and detail pages
 
-To add or replace a photo: put the .jpg in `assets/img/`, add its name in `assets/js/images.js`, and use that name as `img` / `gallery` in `PROJECTS`.
-Keep photos under about 300 KB each (max 1600 px wide) so the site stays fast.
+## Add a new project
+
+1. Upload the photos to `assets/img/` (GitHub: open the folder > Add file > Upload files).
+2. Open `assets/js/projects.js`, copy an existing block, paste it after the last one and change the text.
+   Use the file path as the photo name, for example `img:'assets/img/my-new-project.jpg'` and
+   `gallery:['assets/img/my-new-project.jpg','assets/img/my-new-project-2.jpg']`.
+3. Commit the change. The live site updates in about a minute.
+
+Categories that appear in the filter: Residential, Commercial, Office, Luxury Interiors, Modular Kitchen, Bedroom, Living Room (put any of these in `cats`).
+
+Photo tips: keep each photo under about 300 KB (max 1600 px wide) so the site stays fast, avoid photos where people are visible, and get the client's permission before publishing photos of their home.
 
 ## Put it on GitHub
 
