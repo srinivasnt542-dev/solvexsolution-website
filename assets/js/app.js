@@ -54,6 +54,8 @@ const CONFIG={
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
   heroImage:'living',
   hero3D:false,
+  /* Promise shown in the thank-you popup after an enquiry. Change the wording, or set '' to say just "soon". Only promise what the team can keep. */
+  replyTime:'within 24 hours',
   /* Google Sheet connection: paste the Web app URL from Google Apps Script here (ends with /exec).
      See google-apps-script-code.txt for the setup steps. While empty, the form falls back to formEmail. */
   formEndpoint:'https://script.google.com/macros/s/AKfycbxjmDKapYtsj3SXJP4Sug2LMGmy8lRLKwt_ZtbPdkBvNtvWxPx0we8orODEzADDEiMz/exec',
@@ -376,6 +378,7 @@ let thanksFocus=null;
 function showThanks(name,phone){
   thanksFocus=document.activeElement;
   $('#tTitle',thanks).textContent='Thank you, '+name+'!';
+  $('.t-msg',thanks).textContent='Your consultation request has been received. Our team will get back to you '+(CONFIG.replyTime||'soon')+'.';
   $('.t-num',thanks).innerHTML=phone?'We will contact you on <span style="white-space:nowrap">'+esc(phone)+'</span>.':'';
   const wa=(CONFIG.contact.whatsapp||[])[0],a=$('.t-wa',thanks);
   if(wa){a.href='https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.');a.hidden=false;}else a.hidden=true;
