@@ -400,3 +400,21 @@ form{display:grid;gap:1.6rem}
 .ci svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .ci-whatsapp{color:#25d366;border-color:rgba(37,211,102,.45)}
 .c-list li>span:last-child{overflow-wrap:anywhere}
+
+/* ---- Thank-you popup ---- */
+.modal.thanks.open{display:grid;place-items:center;padding:16px;z-index:140}
+.thanks .t-panel{position:relative;width:min(440px,100%);background:var(--bg);color:var(--ink);padding:clamp(28px,5vw,44px) clamp(22px,5vw,40px) clamp(24px,4vw,34px);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:panelIn .55s cubic-bezier(.2,.7,.2,1) both;outline:0}
+.thanks .t-x{position:absolute;right:10px;top:10px;width:44px;height:44px;border:0;background:none;display:grid;place-items:center;color:var(--muted)}
+.thanks .t-x:hover{color:var(--ink)}
+.t-check{width:64px;height:64px;border-radius:50%;margin:0 auto 1.2rem;display:grid;place-items:center;background:color-mix(in srgb,var(--brass) 18%,transparent);border:1px solid var(--brass);color:var(--brass-2)}
+.t-check svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:tick .7s .25s ease forwards}
+@keyframes tick{to{stroke-dashoffset:0}}
+.thanks h2{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,2.3rem);line-height:1.1;margin-bottom:.8rem}
+.thanks .t-msg{color:var(--muted);font-size:1.02rem;line-height:1.6}
+.thanks .t-num{margin-top:.7rem;font-size:.95rem;color:var(--ink)}
+.thanks .t-num:empty{display:none}
+.t-actions{display:grid;gap:.7rem;margin-top:1.6rem}
+.t-actions .btn{width:100%}
+.thanks .btn-ghost{color:var(--ink)}
+.thanks .btn-ghost:hover{background:rgba(0,0,0,.06)}
+@media (prefers-reduced-motion:reduce){.t-check svg{stroke-dashoffset:0}}

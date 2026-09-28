@@ -54,8 +54,6 @@ const CONFIG={
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
   heroImage:'living',
   hero3D:false,
-  /* Promise shown in the thank-you popup after an enquiry. Change the wording, or set '' to say just "soon". Only promise what the team can keep. */
-  replyTime:'within 24 hours',
   /* Google Sheet connection: paste the Web app URL from Google Apps Script here (ends with /exec).
      See google-apps-script-code.txt for the setup steps. While empty, the form falls back to formEmail. */
   formEndpoint:'https://script.google.com/macros/s/AKfycbxjmDKapYtsj3SXJP4Sug2LMGmy8lRLKwt_ZtbPdkBvNtvWxPx0we8orODEzADDEiMz/exec',
@@ -368,35 +366,6 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
 
 
 /* ---------------- thank-you popup (after a successful enquiry) ---------------- */
-/* The popup carries its own styles so it always displays correctly, even if the site's stylesheet is cached or out of date. */
-(function(){
-  const s=document.createElement('style');s.id='thanks-css';
-  s.textContent=`
-.thanks{position:fixed;inset:0;z-index:140;display:none}
-.thanks.open{display:grid;place-items:center;padding:16px}
-.thanks .scrim{position:absolute;inset:0;background:rgba(12,11,10,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.thanks .t-panel{position:relative;width:min(440px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--bg,#f6f3ee);color:var(--ink,#232220);padding:clamp(28px,5vw,44px) clamp(22px,5vw,40px) clamp(24px,4vw,34px);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:tpIn .55s cubic-bezier(.2,.7,.2,1) both;outline:0;font-family:var(--f-body,'Jost','Segoe UI',system-ui,sans-serif)}
-@keyframes tpIn{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}
-.thanks .t-x{position:absolute;right:10px;top:10px;width:44px;height:44px;border:0;background:none;display:grid;place-items:center;color:var(--muted,#6a655d);cursor:pointer}
-.thanks .t-x:hover{color:var(--ink,#232220)}
-.thanks .t-check{width:64px;height:64px;border-radius:50%;margin:0 auto 1.2rem;display:grid;place-items:center;background:rgba(169,133,80,.16);border:1px solid var(--brass,#a98550);color:var(--brass-2,#8b6b3a)}
-.thanks .t-check svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:tpTick .7s .25s ease forwards}
-@keyframes tpTick{to{stroke-dashoffset:0}}
-.thanks h2{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,2.3rem);line-height:1.1;margin:0 0 .8rem}
-.thanks .t-msg{margin:0;color:var(--muted,#6a655d);font-size:1.02rem;line-height:1.6}
-.thanks .t-num{margin:.7rem 0 0;font-size:.95rem}
-.thanks .t-num:empty{display:none}
-.thanks .t-actions{display:grid;gap:.7rem;margin-top:1.6rem}
-.thanks .btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:1rem 1.4rem;min-height:48px;font:inherit;font-size:.95rem;letter-spacing:.05em;text-decoration:none;cursor:pointer;border:1px solid currentColor;box-sizing:border-box}
-.thanks .btn-primary{background:var(--brass,#a98550);border-color:var(--brass,#a98550);color:#1a1611}
-.thanks .btn-primary:hover{background:var(--brass-2,#8b6b3a);border-color:var(--brass-2,#8b6b3a)}
-.thanks .btn-ghost{background:transparent;color:var(--ink,#232220)}
-.thanks .btn-ghost:hover{background:rgba(0,0,0,.06)}
-.thanks [hidden]{display:none!important}
-@media (prefers-reduced-motion:reduce){.thanks .t-check svg{stroke-dashoffset:0;animation:none}.thanks .t-panel{animation:none}}
-`;
-  document.head.appendChild(s);
-})();
 const thanks=h('div','modal thanks');thanks.id='thanks';thanks.setAttribute('role','dialog');thanks.setAttribute('aria-modal','true');thanks.setAttribute('aria-labelledby','tTitle');thanks.setAttribute('aria-hidden','true');
 thanks.innerHTML='<div class="scrim" data-tclose></div><div class="t-panel" tabindex="-1"><button class="t-x" type="button" aria-label="Close" data-tclose><svg width="16" height="16" viewBox="0 0 18 18" stroke="currentColor" stroke-width="1.6" fill="none"><path d="M3 3l12 12M15 3L3 15"/></svg></button>'+
   '<div class="t-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
@@ -407,7 +376,6 @@ let thanksFocus=null;
 function showThanks(name,phone){
   thanksFocus=document.activeElement;
   $('#tTitle',thanks).textContent='Thank you, '+name+'!';
-  $('.t-msg',thanks).textContent='Your consultation request has been received. Our team will get back to you '+(CONFIG.replyTime||'soon')+'.';
   $('.t-num',thanks).innerHTML=phone?'We will contact you on <span style="white-space:nowrap">'+esc(phone)+'</span>.':'';
   const wa=(CONFIG.contact.whatsapp||[])[0],a=$('.t-wa',thanks);
   if(wa){a.href='https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.');a.hidden=false;}else a.hidden=true;
