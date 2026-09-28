@@ -171,8 +171,6 @@ $('#year').textContent=new Date().getFullYear();
 $('#aboutH').textContent=CONFIG.about.headline;
 $('#aboutStory').innerHTML=CONFIG.about.story.map((t,i)=>'<p'+(i===0?' class="lede"':'')+'>'+esc(t)+'</p>').join('');
 $('#aboutFacts').innerHTML=[['Founder',CONFIG.about.founder.name+', '+CONFIG.about.founder.qual],['Experience',CONFIG.about.experience],['Projects',CONFIG.about.projects],['Service locations',CONFIG.about.locations]].map(r=>'<div><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>').join('');
-$('#team').innerHTML='<figure><div class="ph">[Founder photograph]</div><figcaption><b>'+esc(CONFIG.about.founder.name)+'</b><br>Founder \u00b7 '+esc(CONFIG.about.founder.qual)+'</figcaption></figure>'+
-  [1,2].map(()=>'<figure><div class="ph">[Team photograph]</div><figcaption>[Name and role]</figcaption></figure>').join('');
 
 /* ---------------- services / why / process ---------------- */
 $('#svcGrid').innerHTML=SERVICES.map(s=>'<article class="svc" tabindex="0">'+icon(s[1])+'<h3>'+esc(s[0])+'</h3><p>'+esc(s[2])+'</p></article>').join('');
@@ -305,22 +303,40 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
   const fmt=n=>n.replace(/\D/g,'').slice(-10).replace(/(\d{5})(\d{5})/,'$1 $2');
   const links=(arr,mk)=>(arr||[]).map(n=>'<a href="'+mk(n.replace(/\D/g,'').slice(-10))+'">'+fmt(n)+'</a>').join('<span aria-hidden="true"> \u00b7 </span>');
   const ig=c.instagram?(c.instagramUrl?'<a href="'+esc(c.instagramUrl)+'" rel="noopener">'+esc(c.instagram)+'</a>':'<span>'+esc(c.instagram)+'</span>'):'';
+  const CI={
+    phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    whatsapp:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path transform="translate(7.3 7.3) scale(.43)" stroke-width="3.6" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    email:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    office:'<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+    instagram:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".7"/>'
+  };
+  const ic=(k,label)=>'<span class="ci ci-'+k+'" title="'+label+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+CI[k]+'</svg><span class="sr-only">'+label+'</span></span>';
   const rows=[
-    ['Phone',links(c.phones,n=>'tel:+91'+n),'[Add phone number]'],
-    ['WhatsApp',links(c.whatsapp,n=>'https://wa.me/91'+n),'[Add WhatsApp number]'],
-    ['Email',c.email?'<a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>':'','[Add email address]'],
-    ['Office',c.address?'<span>'+esc(c.address)+'</span>':'','[Add office address]'],
-    ['Instagram',ig,'[Add Instagram handle]']
+    ['phone','Phone',links(c.phones,n=>'tel:+91'+n),'[Add phone number]'],
+    ['whatsapp','WhatsApp',links(c.whatsapp,n=>'https://wa.me/91'+n),'[Add WhatsApp number]'],
+    ['email','Email',c.email?'<a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a>':'','[Add email address]'],
+    ['office','Office',c.address?'<span>'+esc(c.address)+'</span>':'','[Add office address]'],
+    ['instagram','Instagram',ig,'[Add Instagram handle]']
   ];
-  $('#cList').innerHTML=rows.map(r=>'<li><span>'+r[0]+'</span>'+(r[1]?'<span>'+r[1]+'</span>':'<span class="empty">'+r[2]+'</span>')+'</li>').join('');
+  $('#cList').innerHTML=rows.map(r=>'<li>'+ic(r[0],r[1])+(r[2]?'<span>'+r[2]+'</span>':'<span class="empty">'+r[3]+'</span>')+'</li>').join('');
   $('#f-type').innerHTML='<option value="">Select project type</option>'+CONFIG.projectTypes.map(t=>'<option>'+esc(t)+'</option>').join('');
   $('#f-budget').innerHTML=CONFIG.budgets.map(t=>'<option>'+esc(t)+'</option>').join('');
   const form=$('#form'),st=$('#formStatus');
   form.insertAdjacentHTML('beforeend','<div class="hp" aria-hidden="true"><label>Leave this empty<input name="website" tabindex="-1" autocomplete="off"></label></div>');
+  /* Phone check: real Indian mobile (10 digits, starts 6-9) or an international number with +country code. Rejects obvious dummy numbers. */
+  function cleanPhone(v){
+    const raw=String(v||'').trim();let d=raw.replace(/\D/g,'');
+    if(raw.startsWith('+')&&!d.startsWith('91')){return(d.length>=8&&d.length<=15&&new Set(d).size>2)?'+'+d:'';}
+    if(d.length===12&&d.startsWith('91'))d=d.slice(2);else if(d.length===11&&d[0]==='0')d=d.slice(1);
+    if(!/^[6-9]\d{9}$/.test(d)||new Set(d).size<=2)return'';
+    if('01234567890123456789'.includes(d)||'98765432109876543210'.includes(d))return'';
+    return'+91 '+d.slice(0,5)+' '+d.slice(5);
+  }
   form.addEventListener('submit',e=>{
     e.preventDefault();const f=new FormData(form),err={};
     if(!(f.get('name')||'').trim())err.name='Please enter your name.';
-    if((f.get('phone')||'').replace(/\D/g,'').length<7)err.phone='Please enter a valid phone number.';
+    const phoneOk=cleanPhone(f.get('phone'));
+    if(!phoneOk)err.phone='Please enter a valid 10-digit mobile number.';
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((f.get('email')||'').trim()))err.email='Please enter a valid email address.';
     if(!f.get('type'))err.type='Please choose a project type.';
     $$('.err',form).forEach(x=>x.textContent=err[x.dataset.err]||'');
@@ -330,14 +346,16 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
     const name=String(f.get('name')).trim();
     if(CONFIG.formEndpoint){
       const btn=$('button[type=submit]',form),label=btn.textContent,body=new URLSearchParams();
-      [['name',name],['phone',String(f.get('phone')).trim()],['email',String(f.get('email')).trim()],['type',f.get('type')],['budget',f.get('budget')],['message',f.get('message')||''],['page',location.href],['elapsed',Math.round((performance.now()-pageStart)/1000)]].forEach(p=>body.append(p[0],p[1]));
+      [['name',name],['phone',phoneOk],['email',String(f.get('email')).trim()],['type',f.get('type')],['budget',f.get('budget')],['message',f.get('message')||''],['page',location.href],['elapsed',Math.round((performance.now()-pageStart)/1000)]].forEach(p=>body.append(p[0],p[1]));
       btn.disabled=true;btn.textContent='Sending\u2026';st.textContent='';
-      fetch(CONFIG.formEndpoint,{method:'POST',mode:'no-cors',body:body}).then(()=>{
+      fetch(CONFIG.formEndpoint,{method:'POST',body:body,redirect:'follow'}).then(r=>r.json()).then(j=>{
+        if(!j||!j.ok)throw new Error((j&&j.error)||'rejected');
         const wa=(CONFIG.contact.whatsapp||[])[0];
         st.innerHTML='Thank you, '+esc(name)+'. Your request has been received and we will contact you soon.'+(wa?' For a faster reply, <a href="https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.')+'" rel="noopener">message us on WhatsApp</a>.':'');
         st.className='form-status ok';form.reset();
-      }).catch(()=>{
-        st.textContent='Sorry, we could not send your request. Please call or WhatsApp us using the details on this page.';
+      }).catch(err=>{
+        console.warn('Enquiry not confirmed:',err);
+        st.textContent='We could not confirm that your request was received. Please call or WhatsApp us using the details on this page.';
       }).finally(()=>{btn.disabled=false;btn.textContent=label;});
       return;
     }

@@ -383,3 +383,20 @@ form{display:grid;gap:1.6rem}
 .hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .form-status a{color:inherit;text-underline-offset:3px}
 .btn:disabled{opacity:.6;cursor:progress;transform:none}
+
+/* ---- About section typography ---- */
+#about h2{font-family:'Cormorant Garamond','Newsreader',Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(2.5rem,5.2vw,4.6rem);line-height:1.02;letter-spacing:-.015em}
+#about .about-story{gap:1.3rem;max-width:34rem}
+#about .about-story .lede{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(1.4rem,2.3vw,1.85rem);line-height:1.38;color:var(--ink);opacity:.82;max-width:none}
+#about .about-story p:not(.lede){font-family:var(--f-serif);font-style:normal;font-size:1.12rem;line-height:1.8;color:var(--muted)}
+#about .about-story p:last-child{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(1.55rem,2.6vw,2.1rem);line-height:1.25;color:var(--brass-2);margin-top:.3rem}
+#about .facts{max-width:34rem}
+#about .facts dt{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;padding-top:.35rem}
+#about .facts dd{font-family:var(--f-serif);font-size:1.12rem}
+
+/* ---- Contact icons ---- */
+.c-list li{grid-template-columns:44px 1fr;align-items:center;gap:1.1rem}
+.ci{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--brass)}
+.ci svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ci-whatsapp{color:#25d366;border-color:rgba(37,211,102,.45)}
+.c-list li>span:last-child{overflow-wrap:anywhere}
