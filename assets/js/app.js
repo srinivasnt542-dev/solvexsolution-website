@@ -54,6 +54,8 @@ const CONFIG={
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
   heroImage:'living',
   hero3D:false,
+  /* Promise shown in the thank-you popup after an enquiry. Change the wording, or set '' to say just "soon". Only promise what the team can keep. */
+  replyTime:'within 24 hours',
   /* Google Sheet connection: paste the Web app URL from Google Apps Script here (ends with /exec).
      See google-apps-script-code.txt for the setup steps. While empty, the form falls back to formEmail. */
   formEndpoint:'https://script.google.com/macros/s/AKfycbxjmDKapYtsj3SXJP4Sug2LMGmy8lRLKwt_ZtbPdkBvNtvWxPx0we8orODEzADDEiMz/exec',
@@ -350,9 +352,8 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
       btn.disabled=true;btn.textContent='Sending\u2026';st.textContent='';
       fetch(CONFIG.formEndpoint,{method:'POST',body:body,redirect:'follow'}).then(r=>r.json()).then(j=>{
         if(!j||!j.ok)throw new Error((j&&j.error)||'rejected');
-        const wa=(CONFIG.contact.whatsapp||[])[0];
-        st.innerHTML='Thank you, '+esc(name)+'. Your request has been received and we will contact you soon.'+(wa?' For a faster reply, <a href="https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.')+'" rel="noopener">message us on WhatsApp</a>.':'');
-        st.className='form-status ok';form.reset();
+        st.textContent='';st.className='form-status';form.reset();
+        showThanks(name,phoneOk);
       }).catch(err=>{
         console.warn('Enquiry not confirmed:',err);
         st.textContent='We could not confirm that your request was received. Please call or WhatsApp us using the details on this page.';
@@ -364,6 +365,37 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
     else{st.textContent='Thank you, '+name+'. This preview form is not connected yet.';st.className='form-status ok';form.reset();}
   });
 })();
+
+
+/* ---------------- thank-you popup (after a successful enquiry) ---------------- */
+const thanks=h('div','modal thanks');thanks.id='thanks';thanks.setAttribute('role','dialog');thanks.setAttribute('aria-modal','true');thanks.setAttribute('aria-labelledby','tTitle');thanks.setAttribute('aria-hidden','true');
+thanks.innerHTML='<div class="scrim" data-tclose></div><div class="t-panel" tabindex="-1"><button class="t-x" type="button" aria-label="Close" data-tclose><svg width="16" height="16" viewBox="0 0 18 18" stroke="currentColor" stroke-width="1.6" fill="none"><path d="M3 3l12 12M15 3L3 15"/></svg></button>'+
+  '<div class="t-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
+  '<h2 id="tTitle"></h2><p class="t-msg">Your consultation request has been received. Our team will get back to you soon.</p><p class="t-num"></p>'+
+  '<div class="t-actions"><a class="btn btn-primary t-wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Message us on WhatsApp</a><button class="btn btn-ghost t-close" type="button" data-tclose>Close</button></div></div>';
+document.body.appendChild(thanks);
+let thanksFocus=null;
+function showThanks(name,phone){
+  thanksFocus=document.activeElement;
+  $('#tTitle',thanks).textContent='Thank you, '+name+'!';
+  $('.t-msg',thanks).textContent='Your consultation request has been received. Our team will get back to you '+(CONFIG.replyTime||'soon')+'.';
+  $('.t-num',thanks).innerHTML=phone?'We will contact you on <span style="white-space:nowrap">'+esc(phone)+'</span>.':'';
+  const wa=(CONFIG.contact.whatsapp||[])[0],a=$('.t-wa',thanks);
+  if(wa){a.href='https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.');a.hidden=false;}else a.hidden=true;
+  thanks.classList.add('open');thanks.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+  setTimeout(()=>{(a.hidden?$('.t-close',thanks):a).focus();},60);
+}
+function closeThanks(){
+  thanks.classList.remove('open');thanks.setAttribute('aria-hidden','true');document.body.style.overflow='';
+  if(thanksFocus&&thanksFocus.focus)thanksFocus.focus();
+}
+thanks.addEventListener('click',e=>{if(e.target.closest('[data-tclose]'))closeThanks();});
+document.addEventListener('keydown',e=>{
+  if(!thanks.classList.contains('open'))return;
+  if(e.key==='Escape'){closeThanks();return;}
+  if(e.key==='Tab'){const f=$$('a[href],button',thanks).filter(x=>!x.hidden&&x.offsetParent!==null);if(!f.length)return;const first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+});
 
 /* ---------------- parallax + scroll effects ---------------- */
 const paras=$$('[data-parallax]'),tl=$('#timeline'),tfSec=$('#transform');
