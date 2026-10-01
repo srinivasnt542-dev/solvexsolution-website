@@ -52,7 +52,7 @@ const CONFIG={
   /* Provide image URLs (or data URIs) to replace the concept before/after render with real site photos */
   beforeAfter:{before:null,after:null},
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
-  heroImage:'living',
+  heroImage:'living-bright',
   hero3D:false,
   /* Promise shown in the thank-you popup after an enquiry. Change the wording, or set '' to say just "soon". Only promise what the team can keep. */
   replyTime:'within 24 hours',
