@@ -94,3 +94,26 @@ Right now the form opens the visitor's email app addressed to `CONFIG.formEmail`
 - 3D uses three.js r128 loaded from cdnjs. If it fails to load, or a device cannot run WebGL, the site falls back to photographs automatically.
 - "3D concept" project cards and the before/after slider are generated in the browser. Replace them with real photographs when available (`CONFIG.beforeAfter`).
 - Google Fonts (Jost, Newsreader) load from Google. Text falls back to system fonts if they cannot load.
+
+
+## Editing testimonials without touching the code
+
+Real reviews come from a **Testimonials** tab in the same Google Sheet used for enquiries (see
+`google-apps-script-code.txt`). The website checks it automatically -- no file edits needed:
+
+1. Open your **SolvexSolution Enquiries** Google Sheet.
+2. The first time this feature is used, open the tab list at the bottom and look for **Testimonials** --
+   if it isn't there yet, it appears the first time the website checks (or run `getApprovedTestimonials_`
+   once from the Apps Script editor to create it immediately).
+3. Add a row per review: **Approved (Y/N)**, **Review**, **Client name**, **Project type, location**.
+4. Set the first column to **Y** to publish that row on the website. Leave it blank or **N** to keep a
+   review hidden (useful for drafts, or reviews still awaiting the client's permission to publish).
+5. The website re-checks this on every page load -- no redeploying needed, just edit the sheet.
+
+If the sheet has no approved rows yet (or the request fails for any reason, e.g. you're offline while
+editing), the website quietly falls back to the placeholder reviews in `CONFIG.testimonials` -- nothing
+breaks.
+
+If you ever change `formEndpoint` to a **new** deployment URL, re-upload `google-apps-script-code.txt`'s
+contents to Apps Script first (Deploy > Manage deployments > edit > New version) so the testimonials
+endpoint exists there too.

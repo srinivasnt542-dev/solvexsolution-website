@@ -28,7 +28,7 @@ const CONFIG={
   stats:[
     {label:'Projects completed',value:30,suffix:'+'},
     {label:'Years of experience',value:4,suffix:'+'},
-    {label:'Happy clients',value:null,suffix:'+'},
+    {label:'Happy clients',value:20,suffix:'+'},
     {label:'Service area',text:'All Karnataka'}
   ],
   
@@ -54,6 +54,8 @@ const CONFIG={
   /* Hero background: a project photo (name from images.js or a file path). Set hero3D:true to use the 3D room instead. */
   heroImage:'living',
   hero3D:false,
+  /* Promise shown in the thank-you popup after an enquiry. Change the wording, or set '' to say just "soon". Only promise what the team can keep. */
+  replyTime:'within 24 hours',
   /* Google Sheet connection: paste the Web app URL from Google Apps Script here (ends with /exec).
      See google-apps-script-code.txt for the setup steps. While empty, the form falls back to formEmail. */
   formEndpoint:'https://script.google.com/macros/s/AKfycbxjmDKapYtsj3SXJP4Sug2LMGmy8lRLKwt_ZtbPdkBvNtvWxPx0we8orODEzADDEiMz/exec',
@@ -115,6 +117,15 @@ const PROCESS=[
   ['Execution','Carpentry, ceilings, electricals and finishing on site.'],
   ['Final Handover','A walkthrough and snag check before you move in.']
 ];
+
+const STRIP=[
+  ['Residential Interiors','home','Homes that reflect your lifestyle'],
+  ['Commercial Interiors','building','Workspaces that inspire'],
+  ['Modular Kitchens','kitchen','Smart design. Better living.'],
+  ['3D Visualisation','viz','See your space before it\u2019s built'],
+  ['Custom Furniture','chair','Designed for your space'],
+  ['Design + Execution','key','From concept to completion']
+];
 const CATS=['All','Residential','Commercial','Office','Luxury Interiors','Modular Kitchen','Bedroom','Living Room'];
 
 /* Projects live in assets/js/projects.js */
@@ -173,14 +184,20 @@ $('#aboutStory').innerHTML=CONFIG.about.story.map((t,i)=>'<p'+(i===0?' class="le
 $('#aboutFacts').innerHTML=[['Founder',CONFIG.about.founder.name+', '+CONFIG.about.founder.qual],['Experience',CONFIG.about.experience],['Projects',CONFIG.about.projects],['Service locations',CONFIG.about.locations]].map(r=>'<div><dt>'+esc(r[0])+'</dt><dd>'+esc(r[1])+'</dd></div>').join('');
 
 /* ---------------- services / why / process ---------------- */
-$('#svcGrid').innerHTML=SERVICES.map(s=>'<article class="svc" tabindex="0">'+icon(s[1])+'<h3>'+esc(s[0])+'</h3><p>'+esc(s[2])+'</p></article>').join('');
-$('#whyGrid').innerHTML=WHY.map(s=>'<div class="why">'+icon(s[1])+'<h3>'+esc(s[0])+'</h3><p>'+esc(s[2])+'</p></div>').join('');
+const badge=k=>'<span class="ic-badge">'+icon(k)+'</span>';
+$('#stripGrid').innerHTML=STRIP.map(s=>'<li>'+badge(s[1])+'<span class="t"><b>'+esc(s[0])+'</b><span>'+esc(s[2])+'</span></span></li>').join('');
+$('#svcGrid').innerHTML=SERVICES.map(s=>'<article class="svc" tabindex="0">'+badge(s[1])+'<h3>'+esc(s[0])+'</h3><p>'+esc(s[2])+'</p></article>').join('');
+$('#whyGrid').innerHTML=WHY.map(s=>'<div class="why">'+badge(s[1])+'<h3>'+esc(s[0])+'</h3><p>'+esc(s[2])+'</p></div>').join('');
 $('#timeline').innerHTML=PROCESS.map((p,i)=>'<li class="step"><div class="n">0'+(i+1)+'</div><h3>'+esc(p[0])+'</h3><p>'+esc(p[1])+'</p></li>').join('');
 $('#stats').innerHTML=CONFIG.stats.map(s=>{
   if(s.text)return'<div class="stat"><b class="txt">'+esc(s.text)+'</b><span>'+esc(s.label)+'</span></div>';
   const has=s.value!=null;
   return'<div class="stat"><b class="'+(has?'':'empty')+'" data-count="'+(has?s.value:'')+'" data-suffix="'+esc(s.suffix||'')+'">'+(has?'0'+esc(s.suffix||''):'[X]'+esc(s.suffix||''))+'</b><span>'+esc(s.label)+'</span>'+(has?'':'<small>Placeholder: add the real figure in CONFIG.stats</small>')+'</div>';
 }).join('');
+/* Hero stat chips: reuse the same numbers, skip anything not filled in yet, show at most 3 */
+const heroStats=CONFIG.stats.filter(s=>s.text||s.value!=null).slice(0,3);
+$('#heroStats').innerHTML=heroStats.map(s=>'<div class="hero-stat"><b>'+(s.text?esc(s.text):esc(s.value)+esc(s.suffix||''))+'</b><span>'+esc(s.label)+'</span></div>').join('');
+if(!heroStats.length)$('#heroStats').remove();
 /* counters */
 const cio=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;cio.unobserve(en.target);const el=en.target,to=+el.dataset.count,suf=el.dataset.suffix,t0=performance.now(),d=reduce?1:1600;
   (function tick(t){const k=clamp((t-t0)/d,0,1),e=1-Math.pow(1-k,3);el.textContent=Math.round(to*e)+suf;if(k<1)requestAnimationFrame(tick);})(t0);}),{threshold:.6});
@@ -294,8 +311,32 @@ function selectMat(i){
 }
 selectMat(0);
 
-/* ---------------- testimonials ---------------- */
-$('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="margin:0"><span class="flag">Placeholder</span><blockquote>\u201c'+esc(t.quote)+'\u201d</blockquote><figcaption class="who">'+esc(t.who)+'<br>'+esc(t.meta)+'</figcaption></figure>').join('');
+/* ---------------- testimonials ----------------
+   By default these show the placeholders from CONFIG.testimonials above.
+   If CONFIG.formEndpoint is set, the site also tries to load real reviews from a
+   "Testimonials" tab in the Google Sheet (see google-apps-script-code.txt) -- add
+   rows there with Approved set to Y and they replace the placeholders automatically,
+   no code edits needed. */
+const tmSec=$('#testimonials');
+function tmCard(quote,who,meta,isPlaceholder){
+  return '<figure class="tm'+(isPlaceholder?'':' real')+'" style="margin:0">'+(isPlaceholder?'<span class="flag">Placeholder</span>':'')+
+    '<blockquote>\u201c'+esc(quote)+'\u201d</blockquote><figcaption class="who">'+esc(who)+(meta?'<br>'+esc(meta):'')+'</figcaption></figure>';
+}
+function renderTestimonials(list,isPlaceholder){
+  $('#tmGrid').innerHTML=list.map(t=>tmCard(t.quote,t.who||t.name,t.meta||t.detail,isPlaceholder)).join('');
+  if(tmSec){
+    const lede=$('.lede',tmSec);
+    if(lede)lede.textContent=isPlaceholder
+      ?'These are placeholders. Replace each one with a genuine customer review before publishing.'
+      :'Reviews from clients we\u2019ve worked with.';
+  }
+}
+renderTestimonials(CONFIG.testimonials,true);
+if(CONFIG.formEndpoint){
+  fetch(CONFIG.formEndpoint+'?action=testimonials').then(r=>r.ok?r.json():null).then(data=>{
+    if(data&&data.ok&&Array.isArray(data.testimonials)&&data.testimonials.length)renderTestimonials(data.testimonials,false);
+  }).catch(()=>{}); /* fetch failed (offline, script redeployed, etc.) -- placeholders stay, nothing breaks */
+}
 
 /* ---------------- contact ---------------- */
 (function(){
@@ -366,6 +407,35 @@ $('#tmGrid').innerHTML=CONFIG.testimonials.map(t=>'<figure class="tm" style="mar
 
 
 /* ---------------- thank-you popup (after a successful enquiry) ---------------- */
+/* The popup carries its own styles so it always displays correctly, even if the site's stylesheet is cached or out of date. */
+(function(){
+  const s=document.createElement('style');s.id='thanks-css';
+  s.textContent=`
+.thanks{position:fixed;inset:0;z-index:140;display:none}
+.thanks.open{display:grid;place-items:center;padding:16px}
+.thanks .scrim{position:absolute;inset:0;background:rgba(12,11,10,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.thanks .t-panel{position:relative;width:min(440px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--bg,#f6f3ee);color:var(--ink,#232220);padding:clamp(28px,5vw,44px) clamp(22px,5vw,40px) clamp(24px,4vw,34px);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:tpIn .55s cubic-bezier(.2,.7,.2,1) both;outline:0;font-family:var(--f-body,'Jost','Segoe UI',system-ui,sans-serif)}
+@keyframes tpIn{from{opacity:0;transform:translateY(30px) scale(.985)}to{opacity:1;transform:none}}
+.thanks .t-x{position:absolute;right:10px;top:10px;width:44px;height:44px;border:0;background:none;display:grid;place-items:center;color:var(--muted,#6a655d);cursor:pointer}
+.thanks .t-x:hover{color:var(--ink,#232220)}
+.thanks .t-check{width:64px;height:64px;border-radius:50%;margin:0 auto 1.2rem;display:grid;place-items:center;background:rgba(169,133,80,.16);border:1px solid var(--brass,#a98550);color:var(--brass-2,#8b6b3a)}
+.thanks .t-check svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:tpTick .7s .25s ease forwards}
+@keyframes tpTick{to{stroke-dashoffset:0}}
+.thanks h2{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,2.3rem);line-height:1.1;margin:0 0 .8rem}
+.thanks .t-msg{margin:0;color:var(--muted,#6a655d);font-size:1.02rem;line-height:1.6}
+.thanks .t-num{margin:.7rem 0 0;font-size:.95rem}
+.thanks .t-num:empty{display:none}
+.thanks .t-actions{display:grid;gap:.7rem;margin-top:1.6rem}
+.thanks .btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:1rem 1.4rem;min-height:48px;font:inherit;font-size:.95rem;letter-spacing:.05em;text-decoration:none;cursor:pointer;border:1px solid currentColor;box-sizing:border-box}
+.thanks .btn-primary{background:var(--brass,#a98550);border-color:var(--brass,#a98550);color:#1a1611}
+.thanks .btn-primary:hover{background:var(--brass-2,#8b6b3a);border-color:var(--brass-2,#8b6b3a)}
+.thanks .btn-ghost{background:transparent;color:var(--ink,#232220)}
+.thanks .btn-ghost:hover{background:rgba(0,0,0,.06)}
+.thanks [hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.thanks .t-check svg{stroke-dashoffset:0;animation:none}.thanks .t-panel{animation:none}}
+`;
+  document.head.appendChild(s);
+})();
 const thanks=h('div','modal thanks');thanks.id='thanks';thanks.setAttribute('role','dialog');thanks.setAttribute('aria-modal','true');thanks.setAttribute('aria-labelledby','tTitle');thanks.setAttribute('aria-hidden','true');
 thanks.innerHTML='<div class="scrim" data-tclose></div><div class="t-panel" tabindex="-1"><button class="t-x" type="button" aria-label="Close" data-tclose><svg width="16" height="16" viewBox="0 0 18 18" stroke="currentColor" stroke-width="1.6" fill="none"><path d="M3 3l12 12M15 3L3 15"/></svg></button>'+
   '<div class="t-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
@@ -376,6 +446,7 @@ let thanksFocus=null;
 function showThanks(name,phone){
   thanksFocus=document.activeElement;
   $('#tTitle',thanks).textContent='Thank you, '+name+'!';
+  $('.t-msg',thanks).textContent='Your consultation request has been received. Our team will get back to you '+(CONFIG.replyTime||'soon')+'.';
   $('.t-num',thanks).innerHTML=phone?'We will contact you on <span style="white-space:nowrap">'+esc(phone)+'</span>.':'';
   const wa=(CONFIG.contact.whatsapp||[])[0],a=$('.t-wa',thanks);
   if(wa){a.href='https://wa.me/91'+wa.replace(/\D/g,'').slice(-10)+'?text='+encodeURIComponent('Hi SolvexSolution, I just sent a consultation request on your website. My name is '+name+'.');a.hidden=false;}else a.hidden=true;
@@ -505,4 +576,13 @@ if(S){
 }
 paintImgs(document);
 onScroll();
+
+/* ---------------- scroll reveal (fade + rise as sections come into view) ---------------- */
+if(!reduce){
+  const revealSel='.sec-head,.svc,.why,.step,.stat,.mat-tile,.proj,.tm,.hero-stat';
+  const rio=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');rio.unobserve(en.target);}}),{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  function armReveal(){$$(revealSel).forEach(el=>{if(!el.hasAttribute('data-reveal')){el.setAttribute('data-reveal','');rio.observe(el);}});}
+  armReveal();
+  new MutationObserver(()=>armReveal()).observe($('#main'),{childList:true,subtree:true});
+}
 })();

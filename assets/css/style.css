@@ -2,7 +2,7 @@
   --bg:#f6f3ee; --bg2:#ebe5da; --ink:#232220; --muted:#6a655d; --line:rgba(35,34,32,.15);
   --card:#fbf9f6; --wood:#7b5234; --stone:#a9a296; --brass:#a98550; --brass-2:#8b6b3a;
   --on-brass:#1a1611; --nav-bg:rgba(246,243,238,.86);
-  --f-head:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --f-head:'Playfair Display','Cormorant Garamond',Georgia,'Times New Roman',serif;
   --f-body:'Jost','Avenir Next','Segoe UI',system-ui,sans-serif;
   --f-serif:'Newsreader',Georgia,'Times New Roman',serif;
   --pad:clamp(20px,5vw,56px);
@@ -401,20 +401,147 @@ form{display:grid;gap:1.6rem}
 .ci-whatsapp{color:#25d366;border-color:rgba(37,211,102,.45)}
 .c-list li>span:last-child{overflow-wrap:anywhere}
 
-/* ---- Thank-you popup ---- */
-.modal.thanks.open{display:grid;place-items:center;padding:16px;z-index:140}
-.thanks .t-panel{position:relative;width:min(440px,100%);background:var(--bg);color:var(--ink);padding:clamp(28px,5vw,44px) clamp(22px,5vw,40px) clamp(24px,4vw,34px);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:panelIn .55s cubic-bezier(.2,.7,.2,1) both;outline:0}
-.thanks .t-x{position:absolute;right:10px;top:10px;width:44px;height:44px;border:0;background:none;display:grid;place-items:center;color:var(--muted)}
-.thanks .t-x:hover{color:var(--ink)}
-.t-check{width:64px;height:64px;border-radius:50%;margin:0 auto 1.2rem;display:grid;place-items:center;background:color-mix(in srgb,var(--brass) 18%,transparent);border:1px solid var(--brass);color:var(--brass-2)}
-.t-check svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:tick .7s .25s ease forwards}
-@keyframes tick{to{stroke-dashoffset:0}}
-.thanks h2{font-family:'Cormorant Garamond','Newsreader',Georgia,serif;font-weight:500;font-size:clamp(1.8rem,5vw,2.3rem);line-height:1.1;margin-bottom:.8rem}
-.thanks .t-msg{color:var(--muted);font-size:1.02rem;line-height:1.6}
-.thanks .t-num{margin-top:.7rem;font-size:.95rem;color:var(--ink)}
-.thanks .t-num:empty{display:none}
-.t-actions{display:grid;gap:.7rem;margin-top:1.6rem}
-.t-actions .btn{width:100%}
-.thanks .btn-ghost{color:var(--ink)}
-.thanks .btn-ghost:hover{background:rgba(0,0,0,.06)}
-@media (prefers-reduced-motion:reduce){.t-check svg{stroke-dashoffset:0}}
+/* ---- Hero eyebrow + CTA arrow ---- */
+.hero .eyebrow{font-family:var(--f-body);font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:#eadfcb;opacity:.85;margin-bottom:1rem;line-height:1.6}
+@media (max-width:640px){.hero .eyebrow{font-size:.66rem;letter-spacing:.14em;margin-bottom:.7rem}}
+.btn-arrow{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s}
+.btn-primary:hover .btn-arrow{transform:translateX(4px)}
+.hero h1{font-weight:600;letter-spacing:.04em}
+
+/* ---- Icon strip band under the hero ---- */
+.strip{background:var(--bg2);border-bottom:1px solid var(--line);padding-block:clamp(22px,3.4vw,34px)}
+.strip-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,2vw,20px)}
+.strip-grid li{display:flex;align-items:center;gap:.7rem;min-width:0}
+.strip-grid svg{flex:none;width:30px;height:30px;stroke:var(--brass);fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.strip-grid .t{min-width:0}
+.strip-grid b{display:block;font-family:var(--f-body);font-weight:500;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip-grid span{display:block;font-size:.78rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:980px){.strip-grid{grid-template-columns:repeat(3,1fr);row-gap:16px}.strip-grid span{display:none}}
+@media (max-width:560px){.strip-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ---- Real testimonials (fetched from the sheet) look the same as placeholders minus the flag ---- */
+.tm.real{border:1px solid var(--line)}
+
+
+/* =====================================================================
+   MODERN SKIN v2 -- rounded cards, soft depth, richer color, motion.
+   Everything below refines the components above without touching their
+   layout/grid rules, so responsiveness and functionality stay intact.
+   ===================================================================== */
+:root{
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-pill:999px;
+  --sh-sm:0 1px 2px rgba(20,16,10,.05), 0 1px 1px rgba(20,16,10,.04);
+  --sh-md:0 8px 24px -8px rgba(20,16,10,.16), 0 2px 8px -2px rgba(20,16,10,.08);
+  --sh-lg:0 24px 60px -16px rgba(20,16,10,.28), 0 8px 24px -8px rgba(20,16,10,.14);
+  --sh-gold:0 10px 26px -8px rgba(169,133,80,.45);
+  --grad-gold:linear-gradient(135deg,var(--brass) 0%,var(--brass-2) 100%);
+  --ease:cubic-bezier(.2,.75,.25,1);
+}
+.dark{--sh-sm:0 1px 2px rgba(0,0,0,.3);--sh-md:0 8px 28px -8px rgba(0,0,0,.55),0 2px 8px -2px rgba(0,0,0,.4);--sh-lg:0 28px 70px -18px rgba(0,0,0,.65),0 10px 28px -8px rgba(0,0,0,.5)}
+
+body{background:var(--bg)}
+
+/* ---- Buttons: pill, gradient, lift ---- */
+.btn{border-radius:var(--r-pill);border-width:1.5px;font-weight:500;letter-spacing:.03em;transition:background .35s var(--ease),color .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease),box-shadow .35s var(--ease)}
+.btn-primary{background:var(--grad-gold);border-color:transparent;box-shadow:var(--sh-gold)}
+.btn-primary:hover{background:var(--grad-gold);filter:brightness(1.07);transform:translateY(-3px);box-shadow:0 16px 34px -10px rgba(169,133,80,.55)}
+.btn-ghost{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.btn-ghost:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+.nav .btn-primary{box-shadow:0 6px 16px -6px rgba(169,133,80,.5)}
+.chip{border-radius:var(--r-pill)}
+
+/* ---- Nav: always-on glass, shadow on scroll ---- */
+.nav::before{opacity:.001;background:linear-gradient(180deg,rgba(15,13,11,.34),rgba(15,13,11,0))}
+.nav.solid::before{opacity:1;background:var(--nav-bg);box-shadow:0 1px 0 var(--line),var(--sh-sm)}
+.logo i{border-radius:6px}
+.logo i::after{border-radius:2px}
+
+/* ---- Section rhythm: soften the hard block-alternation ---- */
+.section.alt{background:linear-gradient(180deg,var(--bg2),var(--bg2))}
+.sec-head h2,.hero h1{background:linear-gradient(95deg,var(--ink) 40%,var(--brass-2) 130%);-webkit-background-clip:text;background-clip:text}
+.dark .sec-head h2{background:linear-gradient(95deg,var(--ink) 40%,var(--brass) 130%);-webkit-background-clip:text;background-clip:text}
+@supports not (background-clip:text){.sec-head h2,.hero h1{background:none;color:var(--ink)}}
+
+/* ---- Hero: richer overlay + floating stat chips ---- */
+.hero::after{background:linear-gradient(180deg,rgba(8,7,6,.66) 0,rgba(8,7,6,.12) 30%,rgba(8,7,6,.1) 52%,rgba(8,7,6,.9) 100%),linear-gradient(90deg,rgba(8,7,6,.5),rgba(8,7,6,0) 55%)}
+.hero h1{background:linear-gradient(95deg,#fff 30%,#f0d9ae 140%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+@supports not (background-clip:text){.hero h1{-webkit-text-fill-color:initial;color:#fff}}
+.hero-stats{position:absolute;right:var(--pad);bottom:clamp(88px,15vh,160px);z-index:2;display:flex;gap:.7rem}
+.hero-stat{background:rgba(20,18,15,.42);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(244,239,230,.18);border-radius:var(--r-md);padding:.85rem 1.2rem;min-width:92px;box-shadow:var(--sh-md)}
+.hero-stat b{display:block;font-family:var(--f-head);font-size:1.5rem;line-height:1;color:#f6efe0}
+.hero-stat span{display:block;margin-top:.3rem;font-size:.72rem;letter-spacing:.05em;color:rgba(244,239,230,.72);white-space:nowrap}
+@media (max-width:1240px){.hero-stats{display:none}}
+
+/* ---- Icon badges (services / why-us) ---- */
+.ic-badge{width:56px;height:56px;border-radius:var(--r-md);display:grid;place-items:center;background:linear-gradient(155deg,color-mix(in srgb,var(--brass) 16%,transparent),color-mix(in srgb,var(--brass) 4%,transparent));border:1px solid color-mix(in srgb,var(--brass) 30%,transparent);margin-bottom:.4rem}
+.ic-badge svg{width:26px;height:26px;margin:0}
+.strip-grid .ic-badge{width:44px;height:44px;flex:none}
+.strip-grid .ic-badge svg{width:20px;height:20px}
+
+/* ---- Service & Why cards: real cards now ---- */
+.svc-grid,.why-grid{background:none;border:0;gap:clamp(14px,1.6vw,20px)}
+.svc,.why{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card);box-shadow:var(--sh-sm);transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .45s var(--ease)}
+.svc::before{display:none}
+.svc:hover,.why:hover{transform:translateY(-6px);box-shadow:var(--sh-lg);border-color:color-mix(in srgb,var(--brass) 40%,var(--line))}
+.svc:hover svg,.why:hover svg{transform:none}
+
+/* ---- Stat tiles ---- */
+.stats{margin-top:clamp(32px,5vw,56px)}
+.stat{border-top:0;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.6rem 1.5rem;box-shadow:var(--sh-sm);position:relative;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad-gold)}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--sh-md)}
+
+/* ---- Projects: rounded imagery + shadow ---- */
+.proj-media{border-radius:var(--r-md);box-shadow:var(--sh-sm)}
+.proj-media:hover{box-shadow:var(--sh-md)}
+.proj-media .badge{border-radius:var(--r-pill)}
+.proj-media .open{box-shadow:var(--sh-md)}
+.chip[aria-pressed=true]{box-shadow:var(--sh-gold)}
+
+/* ---- Process steps: cards on a soft rail ---- */
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:2.4rem 1.4rem 1.6rem;box-shadow:var(--sh-sm);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.step:hover{transform:translateY(-4px);box-shadow:var(--sh-md)}
+.step::before{width:15px;height:15px;left:1.4rem;top:-7.5px;box-shadow:0 0 0 4px var(--card)}
+.timeline{gap:clamp(10px,1.4vw,18px)}
+.timeline::before,.timeline::after{top:-1px}
+@media (max-width:980px){.step::before{left:-2.2rem;top:.6rem;box-shadow:none}}
+
+/* ---- Materials ---- */
+.mat-tile{border-radius:var(--r-md);box-shadow:var(--sh-sm)}
+.mat-tile:hover{box-shadow:var(--sh-md)}
+.mat-prev{border-radius:var(--r-lg);box-shadow:var(--sh-sm)}
+.mat-ex .thumb{border-radius:var(--r-sm)}
+
+/* ---- Before/After + Showroom + Transform: soft frame ---- */
+.ba,.stage,.sr-wrap{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-md)}
+.sr-wrap{border:0}
+.sr-info{background:var(--card)}
+
+/* ---- Testimonials ---- */
+.tm{border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-sm);background:var(--card);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.tm:hover{transform:translateY(-4px);box-shadow:var(--sh-md)}
+.tm .flag{border-radius:var(--r-pill);background:color-mix(in srgb,var(--brass) 12%,transparent)}
+
+/* ---- Contact: card treatment for form + info ---- */
+.contact-grid form{background:color-mix(in srgb,#000 22%,var(--bg));border:1px solid rgba(244,239,230,.1);border-radius:var(--r-lg);padding:clamp(24px,3vw,40px);box-shadow:var(--sh-lg)}
+.field input,.field select,.field textarea{border-radius:var(--r-sm);border:1px solid var(--line);padding:.85rem 1rem;background:rgba(244,239,230,.04)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brass);box-shadow:0 0 0 3px color-mix(in srgb,var(--brass) 22%,transparent)}
+.c-list li{border-bottom:0;background:rgba(244,239,230,.04);border-radius:var(--r-md);padding:.9rem 1.1rem}
+.ci{background:rgba(244,239,230,.06)}
+
+/* ---- Modal / project detail ---- */
+.m-panel{border-radius:var(--r-lg);box-shadow:var(--sh-lg)}
+@media (max-width:640px){.m-panel{border-radius:0}}
+.m-main,.m-renders button{border-radius:var(--r-md);box-shadow:var(--sh-sm)}
+.m-thumbs button{border-radius:var(--r-sm)}
+.swatch i{border-radius:var(--r-sm)}
+.mat-tags span{border-radius:var(--r-pill)}
+
+/* ---- Footer ---- */
+.footer{border-top:0;position:relative}
+.footer::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent)}
+
+/* ---- Scroll reveal ---- */
+[data-reveal]{opacity:0;transform:translateY(22px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+[data-reveal].in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1;transform:none;transition:none}}
